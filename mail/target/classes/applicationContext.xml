@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	<!-- 扫描包 -->
+	<context:component-scan base-package="edu.hnit.*"></context:component-scan>
+	<!-- 导入外部文件 -->
+	<context:property-placeholder location="classpath:db.properties"/>
+	<!-- 配置数据源 -->
+	  <bean id="datasource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+	  p:user="${username}" p:password="${password}" p:jdbcUrl="${url}" p:driverClass="${driver}"
+	  p:maxStatements="0" p:checkoutTimeout="0"
+	  ></bean>
+	 <!-- 配置hibernate的sessionFactory -->
+	 <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+	 <property name="dataSource" ref="datasource"></property>
+	 <property name="hibernateProperties">
+		<props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>  
+                <!-- 指定自动生成数据表的策略 -->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <!-- 执行操作时是否在控制台打印SQL -->
+                <prop key="hibernate.show_sql">true</prop>  
+                <!-- 是否对SQL进行格式化 -->
+                <prop key="hibernate.format_sql">true</prop>  
+            </props>  
+	 </property>
+	 <property name="mappingLocations" value="classpath:edu/hnit/domain/*.hbm.xml"></property>
+	 </bean>
+	<!-- 配置hibernate事务管理器  -->
+	 <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+	 <property name="sessionFactory" ref="sessionFactory"></property>
+	 </bean>
+	 <!-- 使用annotation配置事物 -->
+	 <tx:advice id="advice" transaction-manager="transactionManager">
+	 <tx:attributes>
+	 <tx:method name="get*" read-only="true"/>
+	 <tx:method name="*"/>
+	 </tx:attributes>
+	 </tx:advice>
+	 <!-- 配置切面 -->
+	 <aop:config>
+	 <aop:pointcut expression="execution(* edu.hnit.service.*.*(..))" id="pointcut"/>
+	 <aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>
+	 </aop:config>
+	</beans>

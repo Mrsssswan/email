@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+    "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+	<package name="admin" extends="struts-default" namespace="/">
+		<action name="adminLogin">
+			<result>/WEB-INF/views/adminLogin.jsp</result>
+		</action>
+		<action name="admin-*" class="adminAction" method="{1}">
+			<result name="{1}">/WEB-INF/admin/admin_{1}.jsp</result>
+			<allowed-methods>login</allowed-methods>
+		</action>
+		<action name="list" class="adminAction">
+			<result type="redirectAction">
+				<param name="actionName">person-list</param>
+				<param name="namespace">/</param>
+			</result>
+		</action>
+	</package>
+
+	
+
+</struts>
+

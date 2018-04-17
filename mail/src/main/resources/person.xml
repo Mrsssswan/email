@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+
+	<package name="views" extends="struts-default" namespace="/">
+		<action name="index">
+			<result>/WEB-INF/views/index.jsp</result>
+		</action>
+		<action name="login">
+			<result>/WEB-INF/views/login.jsp</result>
+		</action>
+		<action name="register">
+			<result>/WEB-INF/views/register.jsp</result>
+		</action>
+
+	</package>
+
+
+	<package name="person" extends="struts-default" namespace="/">
+		<action name="person-*" class="personAction" method="{1}">
+			<result name="{1}">/WEB-INF/person/person_{1}.jsp</result>
+			<result name="delete" type="redirect">
+				<param name="actionName">person-list</param>
+				<param name="namespace">/</param>
+			</result>
+			<allowed-methods>login,register,list,delete,update</allowed-methods>
+		</action>
+		<!-- 注册成功后跳转的action -->
+		<action name="jump">
+			<result>/WEB-INF/person/person_login.jsp</result>
+		</action>
+	</package>
+
+
+</struts>
